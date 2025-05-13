@@ -2,15 +2,41 @@
 import { useNavigate } from 'react-router-dom';
 import './Login.css';
 import React, { useState } from 'react';
+import { API_BASE_URL } from '../../constants/constants';
 
 const Login: React.FC = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [error, setError] = useState('');
     const navigate = useNavigate();
 
-    const handleLogin = (e: React.FormEvent) => {
+    const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
-        console.log('Logging in with:', email, password);
+        setError('');
+        try {
+            const response = await fetch(`${API_BASE_URL}/api/users/login/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    email,
+                    password,
+                }),
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.detail || 'Login failed');
+            }
+
+            const data = await response.json();
+            console.log('Signup successful:', data);
+            navigate('/dashboard');
+        } catch (err: any) {
+            console.error('Error signing up:', err);
+            setError(err.message);
+        }
     };
 
     return (
