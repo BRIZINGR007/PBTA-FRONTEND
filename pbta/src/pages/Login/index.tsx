@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import './Login.css';
 import React, { useState } from 'react';
 import { API_BASE_URL } from '../../constants/constants';
+import axios from 'axios';
 
 const Login: React.FC = () => {
     const [email, setEmail] = useState('');
@@ -13,35 +14,32 @@ const Login: React.FC = () => {
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
         setError('');
+
         try {
-            const response = await fetch(`${API_BASE_URL}/api/users/login/`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    email,
-                    password,
-                }),
+            const response = await axios.post(`${API_BASE_URL}/api/users/login/`, {
+                email,
+                password,
+            }, {
+                withCredentials: true
             });
 
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.detail || 'Login failed');
-            }
-
-            const data = await response.json();
-            console.log('Signup successful:', data);
+            console.log('Login successful:', response.data);
             navigate('/dashboard');
         } catch (err: any) {
-            console.error('Error signing up:', err);
-            setError(err.message);
+            console.error('Error logging in:', err);
+            // Axios error handling - check for response data
+            setError(
+                err.response?.data?.detail ||
+                err.message ||
+                'Login failed'
+            );
         }
     };
 
     return (
         <div className="login-container">
             <h2>Login</h2>
+            {error && <div className="error-message">{error}</div>}
             <form onSubmit={handleLogin}>
                 <div>
                     <label>Email:</label><br />

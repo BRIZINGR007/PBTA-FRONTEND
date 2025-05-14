@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import './Signup.css';
 import { useNavigate } from 'react-router-dom';
 import { API_BASE_URL } from '../../constants/constants';
+import axios from 'axios';
 
 const Signup: React.FC = () => {
     const [name, setName] = useState('');
@@ -16,28 +17,17 @@ const Signup: React.FC = () => {
         setError('');
 
         try {
-            const response = await fetch(`${API_BASE_URL}/api/users/signup/`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    name,
-                    email,
-                    password,
-                }),
+            const response = await axios.post(`${API_BASE_URL}/api/users/signup/`, {
+                name,
+                email,
+                password,
             });
 
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.detail || 'Signup failed');
-            }
-            const data = await response.json();
-            console.log('Signup successful:', data);
+            console.log('Signup successful:', response.data);
             navigate('/login');
         } catch (err: any) {
             console.error('Error signing up:', err);
-            setError(err.message);
+            setError(err.response?.data?.detail || 'Signup failed');
         }
     };
 

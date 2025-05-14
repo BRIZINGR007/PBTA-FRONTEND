@@ -1,10 +1,10 @@
 // src/App.tsx
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
-import Signup from './pages/Signup/Signup';
-import Login from './pages/Login/Login';
-import Dashboard from './pages/Dashboard/DashBoard';
-import AuthGuard from './components/AuthGuard';
+import Signup from './pages/Signup';
+import Login from './pages/Login';
+import Dashboard from './pages/Dashboard';
+import AuthGuard from './components/auth/AuthGuard';
 
 const App: React.FC = () => {
   return (
