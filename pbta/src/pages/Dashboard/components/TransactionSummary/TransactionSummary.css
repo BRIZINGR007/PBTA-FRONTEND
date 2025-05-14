@@ -1,0 +1,93 @@
+.transaction-summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #1e1e1e;
+    padding: 1rem;
+    border: 2px solid white;
+    border-radius: 12px;
+    color: white;
+    font-family: Arial, sans-serif;
+}
+
+.nav-button {
+    font-size: 1.5rem;
+    padding: 0.5rem 1rem;
+    background-color: transparent;
+    border: 2px solid white;
+    color: white;
+    cursor: pointer;
+    border-radius: 6px;
+    height: 100%;
+}
+
+.summary-content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+    flex: 1;
+    margin: 0 1rem;
+}
+
+.month-display {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+}
+
+.month-box,
+.info-box {
+    border: 2px solid white;
+    padding: 0.6rem 1rem;
+    border-radius: 8px;
+    min-width: 160px;
+    text-align: center;
+}
+
+.action-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+    margin-right: 2%;
+}
+
+.action-button {
+    padding: 0.6rem 1rem;
+    background-color: transparent;
+    border: 2px solid white;
+    color: white;
+    cursor: pointer;
+    border-radius: 8px;
+    font-size: 1rem;
+    white-space: nowrap;
+}
+
+
+.custom-overlay {
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+}
+
+.custom-modal {
+    background: white;
+    padding: 20px;
+    width: 300px;
+    margin: auto;
+    border-radius: 10px;
+    position: relative;
+    top: 25%;
+    outline: none;
+    text-align: center;
+}
+
+.custom-modal input {
+    width: 100%;
+    padding: 8px;
+    margin: 10px 0;
+}
+
+.modal-actions button {
+    margin: 5px;
+    padding: 8px 12px;
+}
