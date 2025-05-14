@@ -12,9 +12,17 @@ import './TransactionSummary.css';
 import useGetTransactionSummary from '../../../../hooks/useGetTransactionSummary';
 import axios from 'axios';
 import { API_BASE_URL } from '../../../../constants/constants';
+import { Skeleton } from '@mui/material';
+import TransactionSummarySkeleton from './TransactionSummarySkeleton';
 
-const TransactionSummary: React.FC = () => {
-    const [month, setMonth] = useState('2025-05-01');
+
+
+interface TransactionSummaryProps {
+    month: string;
+    setMonth: React.Dispatch<React.SetStateAction<string>>;
+}
+
+const TransactionSummary: React.FC<TransactionSummaryProps> = ({ month, setMonth }) => {
     const [showBudgetDialog, setShowBudgetDialog] = useState(false);
     const [showTransactionDialog, setShowTransactionDialog] = useState(false);
     const [budgetInput, setBudgetInput] = useState('');
@@ -87,7 +95,9 @@ const TransactionSummary: React.FC = () => {
         return `${year} ${monthName}`;
     };
 
-    if (loading) return <p>Loading...</p>;
+
+    if (loading) return <TransactionSummarySkeleton handlePreviousMonth={handlePreviousMonth} handleNextMonth={handleNextMonth} />;
+
     if (error) return <p style={{ color: 'red' }}>{error}</p>;
     if (!summaryData) return <p>No data available</p>;
 

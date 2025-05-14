@@ -1,14 +1,13 @@
+import { useState } from 'react';
+import Transactions from './components/Transactions';
 import TransactionSummary from './components/TransactionSummary';
 import './Dashboard.css'
 const Dashboard: React.FC = () => {
+    const [month, setMonth] = useState('2025-05-01');
     const handleLogout = () => {
         // Add your logout logic here
         console.log("Logged out");
     };
-    const handleAddBudget = () => alert('Add Budget Clicked');
-    const handleAddTransaction = () => alert('Add Transaction Clicked');
-    const handlePreviousMonth = () => alert('Previous Month Clicked');
-    const handleNextMonth = () => alert('Next Month Clicked');
     return (
         <>
             <nav className="navbar">
@@ -18,8 +17,9 @@ const Dashboard: React.FC = () => {
                 </div>
             </nav>
             <div className="dashboard-content">
-                <TransactionSummary
-                />
+                <TransactionSummary month={month} setMonth={setMonth} />
+                <Transactions month={month} />
+
             </div>
         </>
     )
