@@ -9,7 +9,6 @@ import {
     MenuItem
 } from '@mui/material';
 import './TransactionSummary.css';
-import useGetTransactionSummary from '../../../../hooks/useGetTransactionSummary';
 import axios from 'axios';
 import { API_BASE_URL } from '../../../../constants/constants';
 import TransactionSummarySkeleton from './TransactionSummarySkeleton';
@@ -20,9 +19,13 @@ interface TransactionSummaryProps {
     month: string;
     setMonth: React.Dispatch<React.SetStateAction<string>>;
     refetchTrans: () => Promise<void>;
+    summaryData: any;
+    loading: boolean;
+    error: any;
+    refetchTransSummary: () => Promise<void>;
 }
 
-const TransactionSummary: React.FC<TransactionSummaryProps> = ({ month, setMonth, refetchTrans }) => {
+const TransactionSummary: React.FC<TransactionSummaryProps> = ({ month, setMonth, refetchTrans, summaryData, loading, error, refetchTransSummary }) => {
     const [showBudgetDialog, setShowBudgetDialog] = useState(false);
     const [showTransactionDialog, setShowTransactionDialog] = useState(false);
     const [budgetInput, setBudgetInput] = useState('');
@@ -32,7 +35,6 @@ const TransactionSummary: React.FC<TransactionSummaryProps> = ({ month, setMonth
         description: '',
     });
 
-    const { summaryData, loading, error, refetch } = useGetTransactionSummary(month);
 
     const handleAddMonthlyBudget = async () => {
         try {
@@ -46,7 +48,7 @@ const TransactionSummary: React.FC<TransactionSummaryProps> = ({ month, setMonth
             );
             setShowBudgetDialog(false);
             setBudgetInput('');
-            await refetch();
+            await refetchTransSummary();
         } catch (err: any) {
             alert(`Failed to add budget: ${err.message}`);
         }
@@ -70,7 +72,7 @@ const TransactionSummary: React.FC<TransactionSummaryProps> = ({ month, setMonth
                 description: '',
 
             });
-            await refetch();
+            await refetchTransSummary();
             await refetchTrans();
         } catch (err: any) {
             alert(`Failed to add transaction: ${err.message}`);

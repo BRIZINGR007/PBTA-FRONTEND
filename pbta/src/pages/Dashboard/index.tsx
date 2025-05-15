@@ -3,6 +3,8 @@ import Transactions from './components/Transactions';
 import TransactionSummary from './components/TransactionSummary';
 import './Dashboard.css'
 import useGetTransactions from '../../hooks/useGetTransactions';
+import BudgetComparisonChart from './components/DataAnalysis';
+import useGetTransactionSummary from '../../hooks/useGetTransactionSummary';
 
 
 
@@ -16,6 +18,10 @@ const Dashboard: React.FC = () => {
         setCurrentPage,
         refetchTrans
     } = useGetTransactions(month, 1);
+    const { summaryData,
+        loading: transactionSummaryLoading,
+        error: transactionSummaryError,
+        refetch: refetchTransSummary } = useGetTransactionSummary(month);
 
     const handleLogout = () => {
         // Add your logout logic here
@@ -30,13 +36,25 @@ const Dashboard: React.FC = () => {
                 </div>
             </nav>
             <div className="dashboard-content">
-                <TransactionSummary month={month} setMonth={setMonth} refetchTrans={refetchTrans} />
+                <TransactionSummary
+                    month={month}
+                    setMonth={setMonth}
+                    refetchTrans={refetchTrans}
+                    summaryData={summaryData}
+                    loading={transactionSummaryLoading}
+                    error={transactionSummaryError}
+                    refetchTransSummary={refetchTransSummary}
+                />
                 <Transactions
                     transactions={transactions}
                     loading={loading}
                     numPages={numPages}
                     currentPage={currentPage}
                     setCurrentPage={setCurrentPage}
+                />
+                <BudgetComparisonChart
+                    monthlyBudget={parseFloat(summaryData?.monthly_budget || '0')}
+                    actualExpense={parseFloat(summaryData?.total_expense || '0')}
                 />
 
             </div>
