@@ -24,7 +24,7 @@ const Login: React.FC = () => {
             });
 
             console.log('Login successful:', response.data);
-            navigate('/dashboard');
+            navigate('/');
         } catch (err: any) {
             console.error('Error logging in:', err);
             // Axios error handling - check for response data
