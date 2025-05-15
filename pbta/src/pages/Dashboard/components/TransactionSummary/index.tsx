@@ -12,7 +12,6 @@ import './TransactionSummary.css';
 import useGetTransactionSummary from '../../../../hooks/useGetTransactionSummary';
 import axios from 'axios';
 import { API_BASE_URL } from '../../../../constants/constants';
-import { Skeleton } from '@mui/material';
 import TransactionSummarySkeleton from './TransactionSummarySkeleton';
 
 
@@ -20,9 +19,10 @@ import TransactionSummarySkeleton from './TransactionSummarySkeleton';
 interface TransactionSummaryProps {
     month: string;
     setMonth: React.Dispatch<React.SetStateAction<string>>;
+    refetchTrans: () => Promise<void>;
 }
 
-const TransactionSummary: React.FC<TransactionSummaryProps> = ({ month, setMonth }) => {
+const TransactionSummary: React.FC<TransactionSummaryProps> = ({ month, setMonth, refetchTrans }) => {
     const [showBudgetDialog, setShowBudgetDialog] = useState(false);
     const [showTransactionDialog, setShowTransactionDialog] = useState(false);
     const [budgetInput, setBudgetInput] = useState('');
@@ -30,7 +30,6 @@ const TransactionSummary: React.FC<TransactionSummaryProps> = ({ month, setMonth
         transaction_type: '',
         amount: '',
         description: '',
-        month: '2025-05-01'
     });
 
     const { summaryData, loading, error, refetch } = useGetTransactionSummary(month);
@@ -55,9 +54,10 @@ const TransactionSummary: React.FC<TransactionSummaryProps> = ({ month, setMonth
 
     const handleAddTransaction = async () => {
         try {
+            console.log("Month", { ...transactionData, amount: parseFloat(transactionData.amount), month },);
             await axios.post(
                 `${API_BASE_URL}/api/expense-tracker/add-transaction/`,
-                { ...transactionData, amount: parseFloat(transactionData.amount) },
+                { ...transactionData, amount: parseFloat(transactionData.amount), month },
                 {
                     headers: { 'Content-Type': 'application/json' },
                     withCredentials: true
@@ -68,9 +68,10 @@ const TransactionSummary: React.FC<TransactionSummaryProps> = ({ month, setMonth
                 transaction_type: '',
                 amount: '',
                 description: '',
-                month
+
             });
             await refetch();
+            await refetchTrans();
         } catch (err: any) {
             alert(`Failed to add transaction: ${err.message}`);
         }
@@ -154,9 +155,7 @@ const TransactionSummary: React.FC<TransactionSummaryProps> = ({ month, setMonth
                     >
                         <MenuItem value="Salary">Salary</MenuItem>
                         <MenuItem value="Grocery">Grocery</MenuItem>
-                        <MenuItem value="Rent">Rent</MenuItem>
                         <MenuItem value="Entertainment">Entertainment</MenuItem>
-                        <MenuItem value="Other">Other</MenuItem>
                     </TextField>
                     <TextField
                         label="Amount"

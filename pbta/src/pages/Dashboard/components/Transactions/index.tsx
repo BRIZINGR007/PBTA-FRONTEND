@@ -1,62 +1,29 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
 import './Transactions.css';
-import { API_BASE_URL } from '../../../../constants/constants';
 
-type Transaction = {
-    id: number;
+interface Transaction {
     transaction_id: string;
+    created_at: string;
     transaction_type: string;
     transaction_category: string;
-    amount: string;
     description: string;
-    month: string;
-    created_at: string;
-    user: string;
-};
-
-type TransactionResponse = {
-    transactions: Transaction[];
-    total: number;
-    num_pages: number;
-    current_page: number;
-};
-interface TransactionsProps {
-    month: string;
+    amount: string;
 }
 
-const Transactions: React.FC<TransactionsProps> = ({ month }) => {
-    const [transactions, setTransactions] = useState<Transaction[]>([]);
-    const [currentPage, setCurrentPage] = useState(1);
-    const [numPages, setNumPages] = useState(1);
-    const [loading, setLoading] = useState(false);
+interface TransactionsProps {
+    transactions: Transaction[];
+    loading: boolean;
+    numPages: number;
+    currentPage: number;
+    setCurrentPage: (page: number) => void;
+}
 
-    const fetchTransactions = async (page = 1) => {
-        try {
-            setLoading(true);
-            const response = await axios.get<TransactionResponse>(
-                `${API_BASE_URL}/api/expense-tracker/get-transactions/`,
-                {
-                    params: {
-                        page,
-                        month,
-                    },
-                    withCredentials: true,
-                }
-            );
-            setTransactions(response.data.transactions);
-            setNumPages(response.data.num_pages);
-            setCurrentPage(response.data.current_page);
-        } catch (error) {
-            console.error('Error fetching transactions:', error);
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    useEffect(() => {
-        fetchTransactions(currentPage);
-    }, [currentPage, month]);
+const Transactions: React.FC<TransactionsProps> = ({
+    transactions,
+    loading,
+    numPages,
+    currentPage,
+    setCurrentPage
+}) => {
     return (
         <div className="transactions-container">
             <h2>Transactions</h2>
@@ -106,7 +73,6 @@ const Transactions: React.FC<TransactionsProps> = ({ month }) => {
             )}
         </div>
     );
-
 };
 
 export default Transactions;
