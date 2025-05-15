@@ -68,26 +68,3 @@
     background-color: rgba(0, 0, 0, 0.5);
     z-index: 999;
 }
-
-.custom-modal {
-    background: white;
-    padding: 20px;
-    width: 300px;
-    margin: auto;
-    border-radius: 10px;
-    position: relative;
-    top: 25%;
-    outline: none;
-    text-align: center;
-}
-
-.custom-modal input {
-    width: 100%;
-    padding: 8px;
-    margin: 10px 0;
-}
-
-.modal-actions button {
-    margin: 5px;
-    padding: 8px 12px;
-}

@@ -9,10 +9,10 @@ import {
     MenuItem
 } from '@mui/material';
 import './TransactionSummary.css';
-import useGetTransactionSummary from '../../../../hooks/useGetTransactionSummary';
 import axios from 'axios';
 import { API_BASE_URL } from '../../../../constants/constants';
 import TransactionSummarySkeleton from './TransactionSummarySkeleton';
+import AddTransactionDialog from '../../../../components/Dialog/AddTransaction';
 
 
 
@@ -20,9 +20,13 @@ interface TransactionSummaryProps {
     month: string;
     setMonth: React.Dispatch<React.SetStateAction<string>>;
     refetchTrans: () => Promise<void>;
+    summaryData: any;
+    loading: boolean;
+    error: any;
+    refetchTransSummary: () => Promise<void>;
 }
 
-const TransactionSummary: React.FC<TransactionSummaryProps> = ({ month, setMonth, refetchTrans }) => {
+const TransactionSummary: React.FC<TransactionSummaryProps> = ({ month, setMonth, refetchTrans, summaryData, loading, error, refetchTransSummary }) => {
     const [showBudgetDialog, setShowBudgetDialog] = useState(false);
     const [showTransactionDialog, setShowTransactionDialog] = useState(false);
     const [budgetInput, setBudgetInput] = useState('');
@@ -32,7 +36,6 @@ const TransactionSummary: React.FC<TransactionSummaryProps> = ({ month, setMonth
         description: '',
     });
 
-    const { summaryData, loading, error, refetch } = useGetTransactionSummary(month);
 
     const handleAddMonthlyBudget = async () => {
         try {
@@ -46,7 +49,7 @@ const TransactionSummary: React.FC<TransactionSummaryProps> = ({ month, setMonth
             );
             setShowBudgetDialog(false);
             setBudgetInput('');
-            await refetch();
+            await refetchTransSummary();
         } catch (err: any) {
             alert(`Failed to add budget: ${err.message}`);
         }
@@ -70,7 +73,7 @@ const TransactionSummary: React.FC<TransactionSummaryProps> = ({ month, setMonth
                 description: '',
 
             });
-            await refetch();
+            await refetchTransSummary();
             await refetchTrans();
         } catch (err: any) {
             alert(`Failed to add transaction: ${err.message}`);
@@ -141,45 +144,13 @@ const TransactionSummary: React.FC<TransactionSummaryProps> = ({ month, setMonth
             </Dialog>
 
             {/* Add Transaction Dialog */}
-            <Dialog open={showTransactionDialog} onClose={() => setShowTransactionDialog(false)}>
-                <DialogTitle>Add Transaction</DialogTitle>
-                <DialogContent>
-                    <TextField
-                        select
-                        label="Transaction Type"
-                        fullWidth
-                        variant="outlined"
-                        margin="normal"
-                        value={transactionData.transaction_type}
-                        onChange={(e) => setTransactionData({ ...transactionData, transaction_type: e.target.value })}
-                    >
-                        <MenuItem value="Salary">Salary</MenuItem>
-                        <MenuItem value="Grocery">Grocery</MenuItem>
-                        <MenuItem value="Entertainment">Entertainment</MenuItem>
-                    </TextField>
-                    <TextField
-                        label="Amount"
-                        type="number"
-                        fullWidth
-                        variant="outlined"
-                        margin="normal"
-                        value={transactionData.amount}
-                        onChange={(e) => setTransactionData({ ...transactionData, amount: e.target.value })}
-                    />
-                    <TextField
-                        label="Description"
-                        fullWidth
-                        variant="outlined"
-                        margin="normal"
-                        value={transactionData.description}
-                        onChange={(e) => setTransactionData({ ...transactionData, description: e.target.value })}
-                    />
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={() => setShowTransactionDialog(false)} color="secondary">Cancel</Button>
-                    <Button onClick={handleAddTransaction} variant="contained" color="primary">Submit</Button>
-                </DialogActions>
-            </Dialog>
+            <AddTransactionDialog
+                open={showTransactionDialog}
+                onClose={() => setShowTransactionDialog(false)}
+                onSubmit={handleAddTransaction}
+                transactionData={transactionData}
+                setTransactionData={setTransactionData}
+            />
         </div>
     );
 };
