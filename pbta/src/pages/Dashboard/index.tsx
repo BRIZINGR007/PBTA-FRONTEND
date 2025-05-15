@@ -51,6 +51,8 @@ const Dashboard: React.FC = () => {
                     numPages={numPages}
                     currentPage={currentPage}
                     setCurrentPage={setCurrentPage}
+                    refetchTransactions={refetchTrans}
+                    refetchTransSummary={refetchTransSummary}
                 />
                 <BudgetComparisonChart
                     monthlyBudget={parseFloat(summaryData?.monthly_budget || '0')}

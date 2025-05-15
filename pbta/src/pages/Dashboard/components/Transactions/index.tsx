@@ -1,4 +1,7 @@
+import axios from 'axios';
 import './Transactions.css';
+import { useState } from 'react';
+import EditTransactionDialog from '../../../../components/Dialog/EditTransaction';
 
 interface Transaction {
     transaction_id: string;
@@ -15,6 +18,8 @@ interface TransactionsProps {
     numPages: number;
     currentPage: number;
     setCurrentPage: (page: number) => void;
+    refetchTransactions: () => void;
+    refetchTransSummary: () => void;
 }
 
 const Transactions: React.FC<TransactionsProps> = ({
@@ -22,8 +27,51 @@ const Transactions: React.FC<TransactionsProps> = ({
     loading,
     numPages,
     currentPage,
-    setCurrentPage
+    setCurrentPage,
+    refetchTransactions,
+    refetchTransSummary
 }) => {
+    const [showEditDialog, setShowEditDialog] = useState(false);
+    const [currentTransaction, setCurrentTransaction] = useState<Transaction | null>(null);
+    const handleDelete = async (transactionId: string) => {
+        try {
+            await axios.delete(
+                `http://localhost:8000/api/expense-tracker/delete-transaction/`,
+                {
+                    params: { transaction_id: transactionId },
+                    withCredentials: true // includes JWT from cookies
+                }
+            );
+            refetchTransactions();
+            refetchTransSummary();
+
+        } catch (error) {
+            console.error('Error deleting transaction:', error);
+        }
+    };
+    const openEditDialog = (transaction: Transaction) => {
+        setCurrentTransaction(transaction);
+        setShowEditDialog(true);
+    };
+    const handleEdit = async (updatedTransaction: Transaction) => {
+        try {
+            await axios.patch(
+                `http://localhost:8000/api/expense-tracker/edit-transaction/`,
+                updatedTransaction,
+                {
+                    params: { transaction_id: updatedTransaction.transaction_id },
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    withCredentials: true
+                }
+            );
+            refetchTransactions();
+            refetchTransSummary();
+        } catch (error) {
+            console.error('Error editing transaction:', error);
+        }
+    };
     return (
         <div className="transactions-container">
             <h2>Transactions</h2>
@@ -44,6 +92,7 @@ const Transactions: React.FC<TransactionsProps> = ({
                                 <th>Category</th>
                                 <th>Description</th>
                                 <th>Amount</th>
+                                <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -54,6 +103,10 @@ const Transactions: React.FC<TransactionsProps> = ({
                                     <td>{tx.transaction_category}</td>
                                     <td>{tx.description}</td>
                                     <td>₹ {parseFloat(tx.amount).toLocaleString()}</td>
+                                    <td>
+                                        <button onClick={() => openEditDialog(tx)}>Edit</button>
+                                        <button onClick={() => handleDelete(tx.transaction_id)}>Delete</button>
+                                    </td>
                                 </tr>
                             ))}
                         </tbody>
@@ -71,7 +124,16 @@ const Transactions: React.FC<TransactionsProps> = ({
                     </div>
                 </>
             )}
+
+            ## Edit  Flow
+            <EditTransactionDialog
+                open={showEditDialog}
+                onClose={() => setShowEditDialog(false)}
+                transaction={currentTransaction}
+                onSave={handleEdit}
+            />
         </div>
+
     );
 };
 
