@@ -1,16 +1,24 @@
 import React, { useEffect, useRef } from 'react';
 import * as d3 from 'd3';
 
-interface D3BudgetChartProps {
-    monthlyBudget: number;
-    actualExpense: number;
+interface D3BarChartProps {
+    leftValue: number;
+    rightValue: number;
+    leftLabel?: string;
+    rightLabel?: string;
+    title?: string;
+    subtitle?: string;
     width?: number;
     height?: number;
 }
 
-const D3BarChart: React.FC<D3BudgetChartProps> = ({
-    monthlyBudget,
-    actualExpense,
+const D3BarChart: React.FC<D3BarChartProps> = ({
+    leftValue,
+    rightValue,
+    leftLabel = 'Monthly Budget',
+    rightLabel = 'Actual Expense',
+    title = 'Budget vs. Actual Expense Comparison',
+    subtitle = '(Indian Rupees)',
     width = 600,
     height = 400
 }) => {
@@ -56,8 +64,8 @@ const D3BarChart: React.FC<D3BudgetChartProps> = ({
 
         // Data preparation
         const data = [
-            { category: 'Monthly Budget', value: monthlyBudget },
-            { category: 'Actual Expense', value: actualExpense }
+            { category: leftLabel, value: leftValue },
+            { category: rightLabel, value: rightValue }
         ];
 
         // Scales
@@ -139,7 +147,7 @@ const D3BarChart: React.FC<D3BudgetChartProps> = ({
             .attr('font-size', '20px')
             .attr('font-weight', 'bold')
             .attr('fill', '#333')
-            .text('Budget vs. Actual Expense Comparison');
+            .text(title);
 
         // Subtitle with currency indicator
         svg.append('text')
@@ -149,15 +157,42 @@ const D3BarChart: React.FC<D3BudgetChartProps> = ({
             .attr('font-size', '14px')
             .attr('font-style', 'italic')
             .attr('fill', '#555')
-            .text('(Indian Rupees)');
+            .text(subtitle);
 
-        // Calculate percentage difference
-        const percentDiff = ((actualExpense - monthlyBudget) / monthlyBudget * 100).toFixed(1);
-        const diffText = actualExpense > monthlyBudget
-            ? `Actual is ${percentDiff}% over budget`
-            : actualExpense < monthlyBudget
-                ? `Actual is ${Math.abs(Number(percentDiff))}% under budget`
-                : 'Actual expense matches budget exactly';
+        // Calculate percentage difference for the appropriate comparison context
+        const percentDiff = ((rightValue - leftValue) / leftValue * 100).toFixed(1);
+
+        // Dynamic difference text based on the labels
+        let diffText = '';
+        let diffColor = '';
+
+        // For Budget vs Expense comparison
+        if (leftLabel.toLowerCase().includes('budget') && rightLabel.toLowerCase().includes('expense')) {
+            diffText = rightValue > leftValue
+                ? `Actual is ${percentDiff}% over budget`
+                : rightValue < leftValue
+                    ? `Actual is ${Math.abs(Number(percentDiff))}% under budget`
+                    : 'Actual expense matches budget exactly';
+            diffColor = rightValue > leftValue ? '#d32f2f' : '#0277bd';
+        }
+        // For Income vs Expense comparison
+        else if (leftLabel.toLowerCase().includes('income') && rightLabel.toLowerCase().includes('expense')) {
+            diffText = rightValue > leftValue
+                ? `Expenses exceed income by ${percentDiff}%`
+                : rightValue < leftValue
+                    ? `${Math.abs(Number(percentDiff))}% of income saved`
+                    : 'Expenses equal income';
+            diffColor = rightValue > leftValue ? '#d32f2f' : '#0277bd';
+        }
+        // Default comparison
+        else {
+            diffText = rightValue > leftValue
+                ? `${rightLabel} is ${percentDiff}% higher than ${leftLabel}`
+                : rightValue < leftValue
+                    ? `${rightLabel} is ${Math.abs(Number(percentDiff))}% lower than ${leftLabel}`
+                    : `${rightLabel} equals ${leftLabel}`;
+            diffColor = rightValue > leftValue ? '#d32f2f' : '#0277bd';
+        }
 
         // Add annotation about the difference with better positioning and styling
         svg.append('rect')
@@ -167,8 +202,8 @@ const D3BarChart: React.FC<D3BudgetChartProps> = ({
             .attr('height', 30)
             .attr('rx', 15)
             .attr('ry', 15)
-            .attr('fill', actualExpense > monthlyBudget ? '#ffecec' : '#e6f7ff')
-            .attr('stroke', actualExpense > monthlyBudget ? '#ffcdd2' : '#b3e5fc')
+            .attr('fill', rightValue > leftValue ? '#ffecec' : '#e6f7ff')
+            .attr('stroke', rightValue > leftValue ? '#ffcdd2' : '#b3e5fc')
             .attr('stroke-width', 1);
 
         svg.append('text')
@@ -177,13 +212,19 @@ const D3BarChart: React.FC<D3BudgetChartProps> = ({
             .attr('text-anchor', 'middle')
             .attr('font-size', '14px')
             .attr('font-weight', 'bold')
-            .attr('fill', actualExpense > monthlyBudget ? '#d32f2f' : '#0277bd')
+            .attr('fill', diffColor)
             .text(diffText);
+
+        // Dynamic color for the second bar based on the comparison result
+        const rightBarColor =
+            leftLabel.toLowerCase().includes('budget') && rightValue > leftValue ? '#f44336' :
+                leftLabel.toLowerCase().includes('income') && rightValue > leftValue ? '#f44336' :
+                    '#2196F3';
 
         // Enhanced color scale with better colors
         const colorScale = d3.scaleOrdinal<string>()
             .domain(data.map(d => d.category))
-            .range(['#4CAF50', actualExpense > monthlyBudget ? '#f44336' : '#2196F3']);
+            .range(['#4CAF50', rightBarColor]);
 
         // Drop shadow filter for 3D effect
         const defs = svg.append('defs');
@@ -269,9 +310,9 @@ const D3BarChart: React.FC<D3BudgetChartProps> = ({
             .attr('text-anchor', 'middle')
             .attr('font-size', '16px')
             .attr('fill', '#fff')
-            .text(d => d.category === 'Monthly Budget' ? '₹' : '₹');
+            .text('₹');
 
-    }, [monthlyBudget, actualExpense, width, height]);
+    }, [leftValue, rightValue, leftLabel, rightLabel, title, subtitle, width, height]);
 
     return <svg ref={svgRef} className="w-full"></svg>;
 };

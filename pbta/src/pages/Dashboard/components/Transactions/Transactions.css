@@ -1,5 +1,131 @@
 .transactions-container {
     margin-top: 2rem;
+    text-align: center;
+}
+
+/* Enhanced filter styles */
+.filters-container {
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    text-align: left;
+}
+
+.filters-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.filters-title {
+    margin: 0;
+    font-size: 1.1rem;
+    color: #333;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.filter-icon {
+    color: #555;
+}
+
+.filter-toggle {
+    background-color: transparent;
+    border: none;
+    color: #000;
+    font-size: 0.9rem;
+    cursor: pointer;
+    padding: 0.3rem 0.5rem;
+    border-radius: 4px;
+    transition: background-color 0.2s;
+}
+
+.filter-toggle:hover {
+    background-color: #eee;
+}
+
+.filters-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+    align-items: end;
+}
+
+.filter-item {
+    display: flex;
+    flex-direction: column;
+}
+
+.filter-item label {
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+    color: #555;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.filter-input {
+    height: 42px;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+    padding: 0 1rem;
+    font-size: 0.95rem;
+    transition: all 0.2s ease;
+}
+
+.filter-input:focus {
+    outline: none;
+    border-color: #000;
+    box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.1);
+}
+
+.select-input {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23333' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    background-size: 16px;
+    padding-right: 2.5rem;
+}
+
+.date-input {
+    font-family: inherit;
+}
+
+.amount-input {
+    font-family: inherit;
+}
+
+.filter-reset {
+    background-color: transparent;
+    color: #555;
+    border: 1px solid #ddd;
+    height: 42px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.filter-reset:hover {
+    background-color: #f0f0f0;
+    border-color: #ccc;
+}
+
+.filter-results {
+    margin-top: 1rem;
+    font-size: 0.9rem;
+    color: #666;
+    padding-top: 1rem;
+    border-top: 1px solid #eee;
 }
 
 .transactions-table {
@@ -18,6 +144,7 @@
     overflow: hidden;
     text-overflow: ellipsis;
 }
+
 
 .transactions-table th:first-child,
 .transactions-table td:first-child {

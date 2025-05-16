@@ -3,7 +3,8 @@ import './Transactions.css';
 import { useState } from 'react';
 import EditTransactionDialog from '../../../../components/Dialog/EditTransaction';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEdit, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
+import { faEdit, faTrashAlt, faFilter, faCalendarAlt, faMoneyBillWave } from '@fortawesome/free-solid-svg-icons';
+import { API_BASE_URL } from '../../../../constants/constants';
 
 interface Transaction {
     transaction_id: string;
@@ -35,10 +36,15 @@ const Transactions: React.FC<TransactionsProps> = ({
 }) => {
     const [showEditDialog, setShowEditDialog] = useState(false);
     const [currentTransaction, setCurrentTransaction] = useState<Transaction | null>(null);
+    const [filterCategory, setFilterCategory] = useState('');
+    const [filterDate, setFilterDate] = useState('');
+    const [filterAmount, setFilterAmount] = useState('');
+    const [showFilters, setShowFilters] = useState(true);
+
     const handleDelete = async (transactionId: string) => {
         try {
             await axios.delete(
-                `http://localhost:8000/api/expense-tracker/delete-transaction/`,
+                `${API_BASE_URL}/api/expense-tracker/delete-transaction/`,
                 {
                     params: { transaction_id: transactionId },
                     withCredentials: true // includes JWT from cookies
@@ -51,14 +57,16 @@ const Transactions: React.FC<TransactionsProps> = ({
             console.error('Error deleting transaction:', error);
         }
     };
+
     const openEditDialog = (transaction: Transaction) => {
         setCurrentTransaction(transaction);
         setShowEditDialog(true);
     };
+
     const handleEdit = async (updatedTransaction: Transaction) => {
         try {
             await axios.patch(
-                `http://localhost:8000/api/expense-tracker/edit-transaction/`,
+                `${API_BASE_URL}/api/expense-tracker/edit-transaction/`,
                 updatedTransaction,
                 {
                     params: { transaction_id: updatedTransaction.transaction_id },
@@ -74,6 +82,7 @@ const Transactions: React.FC<TransactionsProps> = ({
             console.error('Error editing transaction:', error);
         }
     };
+
     const formatDate = (dateString: string) => {
         const date = new Date(dateString);
         return date.toLocaleDateString('en-US', {
@@ -82,9 +91,24 @@ const Transactions: React.FC<TransactionsProps> = ({
             day: 'numeric'
         });
     };
+
+    const resetFilters = () => {
+        setFilterCategory('');
+        setFilterDate('');
+        setFilterAmount('');
+    };
+
+    const filteredTransactions = transactions.filter((tx) => {
+        const matchCategory = filterCategory ? tx.transaction_category === filterCategory || tx.transaction_type === filterCategory : true;
+        const matchDate = filterDate ? new Date(tx.created_at).toISOString().split('T')[0] === filterDate : true;
+        const matchAmount = filterAmount ? parseFloat(tx.amount) >= parseFloat(filterAmount) : true;
+        return matchCategory && matchDate && matchAmount;
+    });
+
     return (
         <div className="transactions-container">
             <h2>Transaction Overview</h2>
+
             {loading ? (
                 <div className="loading-container">
                     <div className="spinner" />
@@ -94,6 +118,78 @@ const Transactions: React.FC<TransactionsProps> = ({
                 <p className="empty-message">Add transactions to track your budget.</p>
             ) : (
                 <>
+                    <div className="filters-container">
+                        <div className="filters-header">
+                            <h3 className="filters-title">
+                                <FontAwesomeIcon icon={faFilter} className="filter-icon" /> Filter Transactions
+                            </h3>
+                            <button
+                                className="filter-toggle"
+                                onClick={() => setShowFilters(!showFilters)}
+                            >
+                                {showFilters ? 'Hide Filters' : 'Show Filters'}
+                            </button>
+                        </div>
+
+                        {showFilters && (
+                            <div className="filters-grid">
+                                <div className="filter-item">
+                                    <label htmlFor="date-filter">
+                                        <FontAwesomeIcon icon={faCalendarAlt} /> Date
+                                    </label>
+                                    <input
+                                        id="date-filter"
+                                        type="date"
+                                        value={filterDate}
+                                        onChange={(e) => setFilterDate(e.target.value)}
+                                        className="filter-input date-input"
+                                    />
+                                </div>
+
+                                <div className="filter-item">
+                                    <label htmlFor="category-filter">Category</label>
+                                    <select
+                                        id="category-filter"
+                                        value={filterCategory}
+                                        onChange={(e) => setFilterCategory(e.target.value)}
+                                        className="filter-input select-input"
+                                    >
+                                        <option value="">All Categories</option>
+                                        <option value="Income">Income</option>
+                                        <option value="Expenses">Expenses</option>
+                                    </select>
+                                </div>
+
+                                <div className="filter-item">
+                                    <label htmlFor="amount-filter">
+                                        <FontAwesomeIcon icon={faMoneyBillWave} /> Min Amount (₹)
+                                    </label>
+                                    <input
+                                        id="amount-filter"
+                                        type="number"
+                                        value={filterAmount}
+                                        onChange={(e) => setFilterAmount(e.target.value)}
+                                        placeholder="0"
+                                        className="filter-input amount-input"
+                                    />
+                                </div>
+
+                                <div className="filter-item">
+                                    <button
+                                        className="filter-reset"
+                                        onClick={resetFilters}
+                                    >
+                                        Reset Filters
+                                    </button>
+                                </div>
+                            </div>
+                        )}
+
+                        <div className="filter-results">
+                            Showing {filteredTransactions.length} of {transactions.length} transactions
+                        </div>
+                    </div>
+
                     <table className="transactions-table">
                         <thead>
                             <tr>
@@ -106,7 +202,7 @@ const Transactions: React.FC<TransactionsProps> = ({
                             </tr>
                         </thead>
                         <tbody>
-                            {transactions.map((tx) => (
+                            {filteredTransactions.map((tx) => (
                                 <tr key={tx.transaction_id}>
                                     <td>{formatDate(tx.created_at)}</td>
                                     <td>{tx.transaction_type}</td>
@@ -141,7 +237,6 @@ const Transactions: React.FC<TransactionsProps> = ({
                 onSave={handleEdit}
             />
         </div>
-
     );
 };
 

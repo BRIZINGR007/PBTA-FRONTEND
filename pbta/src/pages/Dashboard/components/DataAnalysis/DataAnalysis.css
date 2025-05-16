@@ -1,4 +1,29 @@
-.data-analysis-container {
-    margin-top: 4rem;
-    flex: auto;
+.budget-comparison-container {
+    margin-top: 2rem;
+    text-align: center;
+    padding: 2rem;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+}
+
+.budget-comparison-heading {
+    font-size: 1.8rem;
+    margin-bottom: 1.5rem;
+    color: #333;
+}
+
+.chart-row {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    flex-wrap: wrap;
+}
+
+.chart-wrapper {
+    background-color: white;
+    border: 2px solid #000;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    max-width: 500px;
+    width: 100%;
 }

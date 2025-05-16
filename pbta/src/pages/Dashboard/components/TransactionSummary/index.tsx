@@ -6,7 +6,6 @@ import {
     DialogActions,
     Button,
     TextField,
-    MenuItem
 } from '@mui/material';
 import './TransactionSummary.css';
 import axios from 'axios';
@@ -98,6 +97,13 @@ const TransactionSummary: React.FC<TransactionSummaryProps> = ({ month, setMonth
         const monthName = date.toLocaleString('default', { month: 'long' });
         return `${year} ${monthName}`;
     };
+    const formatCurrency = (value: number) => {
+        return new Intl.NumberFormat('en-IN', {
+            style: 'currency',
+            currency: 'INR',
+            maximumFractionDigits: 0,
+        }).format(value);
+    };
 
 
     if (loading) return <TransactionSummarySkeleton handlePreviousMonth={handlePreviousMonth} handleNextMonth={handleNextMonth} />;
@@ -111,11 +117,12 @@ const TransactionSummary: React.FC<TransactionSummaryProps> = ({ month, setMonth
             <div className="summary-content">
                 <div className="month-display">
                     <div className="month-box">{formatDisplayMonth(month)}</div>
-                    <div className="info-box">Income: {parseFloat(summaryData.total_income).toLocaleString()}</div>
-                    <div className="info-box">Balance: {parseFloat(summaryData.balance).toLocaleString()}</div>
-                    <div className="info-box">Expenses: {parseFloat(summaryData.total_expense).toLocaleString()}</div>
-                    <div className="info-box">Monthly Budget: {parseFloat(summaryData.monthly_budget).toLocaleString()}</div>
+                    <div className="info-box">Income: {formatCurrency(summaryData.total_income)}</div>
+                    <div className="info-box">Balance: {formatCurrency(summaryData.balance)}</div>
+                    <div className="info-box">Expenses: {formatCurrency(summaryData.total_expense)}</div>
+                    <div className="info-box">Monthly Budget: {formatCurrency(summaryData.monthly_budget)}</div>
                 </div>
+
             </div>
             <div className="action-panel">
                 <button className="action-button" onClick={() => setShowBudgetDialog(true)}>Add Monthly Budget</button>

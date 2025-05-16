@@ -5,6 +5,8 @@ import './Dashboard.css'
 import useGetTransactions from '../../hooks/useGetTransactions';
 import BudgetComparisonChart from './components/DataAnalysis';
 import useGetTransactionSummary from '../../hooks/useGetTransactionSummary';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 
 
@@ -13,6 +15,7 @@ const Dashboard: React.FC = () => {
         const now = new Date();
         return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-01`;
     });
+    const navigate = useNavigate();
 
     const {
         transactions,
@@ -27,9 +30,17 @@ const Dashboard: React.FC = () => {
         error: transactionSummaryError,
         refetch: refetchTransSummary } = useGetTransactionSummary(month);
 
-    const handleLogout = () => {
-        // Add your logout logic here
-        console.log("Logged out");
+    const handleLogout = async () => {
+        try {
+            const response = await axios.post('http://localhost:8000/api/users/logout/', {}, {
+                withCredentials: true
+            }
+            );
+            console.log("Succesfully  Logged Out :", response.data);
+            navigate('/login');
+        } catch (error) {
+            console.error("Logout failed:", error);
+        }
     };
     return (
         <>
@@ -61,6 +72,7 @@ const Dashboard: React.FC = () => {
                 <BudgetComparisonChart
                     monthlyBudget={parseFloat(summaryData?.monthly_budget || '0')}
                     actualExpense={parseFloat(summaryData?.total_expense || '0')}
+                    totalIncome={parseFloat(summaryData?.total_income || '0')}
                 />
 
             </div>
