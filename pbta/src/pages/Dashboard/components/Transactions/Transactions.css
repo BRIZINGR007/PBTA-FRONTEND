@@ -6,17 +6,63 @@
     width: 100%;
     border-collapse: collapse;
     margin-bottom: 1rem;
+    border: 2px solid #000;
 }
+
 
 .transactions-table th,
 .transactions-table td {
     border: 1px solid #ddd;
     padding: 0.5rem;
     text-align: left;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.transactions-table th:first-child,
+.transactions-table td:first-child {
+    width: 120px;
+}
+
+.transactions-table th:nth-child(2),
+.transactions-table td:nth-child(2) {
+    width: 150px;
+}
+
+.transactions-table th:nth-child(3),
+.transactions-table td:nth-child(3) {
+    width: 150px;
+}
+
+.transactions-table th:nth-child(5),
+.transactions-table td:nth-child(5) {
+    width: 170px;
+}
+
+.transactions-table th:last-child,
+.transactions-table td:last-child {
+    width: 150px;
 }
 
 .transactions-table th {
-    background-color: #f0f0f0;
+    background-color: #000;
+    color: white;
+    font-weight: bold;
+}
+
+.transactions-table button {
+    background-color: #000;
+    color: white;
+    border: none;
+    padding: 8px 8px;
+    margin-right: 8px;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 0.9rem;
+}
+
+.transactions-table button:hover {
+    background-color: #333;
 }
 
 .pagination {
@@ -32,7 +78,7 @@
 }
 
 .pagination button.active {
-    background-color: #007bff;
+    background-color: #000000;
     color: white;
 }
 

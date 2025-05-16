@@ -2,6 +2,8 @@ import axios from 'axios';
 import './Transactions.css';
 import { useState } from 'react';
 import EditTransactionDialog from '../../../../components/Dialog/EditTransaction';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faEdit, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 
 interface Transaction {
     transaction_id: string;
@@ -72,9 +74,17 @@ const Transactions: React.FC<TransactionsProps> = ({
             console.error('Error editing transaction:', error);
         }
     };
+    const formatDate = (dateString: string) => {
+        const date = new Date(dateString);
+        return date.toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric'
+        });
+    };
     return (
         <div className="transactions-container">
-            <h2>Transactions</h2>
+            <h2>Transaction Overview</h2>
             {loading ? (
                 <div className="loading-container">
                     <div className="spinner" />
@@ -98,14 +108,14 @@ const Transactions: React.FC<TransactionsProps> = ({
                         <tbody>
                             {transactions.map((tx) => (
                                 <tr key={tx.transaction_id}>
-                                    <td>{new Date(tx.created_at).toLocaleDateString()}</td>
+                                    <td>{formatDate(tx.created_at)}</td>
                                     <td>{tx.transaction_type}</td>
                                     <td>{tx.transaction_category}</td>
                                     <td>{tx.description}</td>
                                     <td>₹ {parseFloat(tx.amount).toLocaleString()}</td>
                                     <td>
-                                        <button onClick={() => openEditDialog(tx)}>Edit</button>
-                                        <button onClick={() => handleDelete(tx.transaction_id)}>Delete</button>
+                                        <button onClick={() => openEditDialog(tx)}><FontAwesomeIcon icon={faEdit} /> Edit</button>
+                                        <button onClick={() => handleDelete(tx.transaction_id)}><FontAwesomeIcon icon={faTrashAlt} /> Delete</button>
                                     </td>
                                 </tr>
                             ))}
@@ -124,8 +134,6 @@ const Transactions: React.FC<TransactionsProps> = ({
                     </div>
                 </>
             )}
-
-            ## Edit  Flow
             <EditTransactionDialog
                 open={showEditDialog}
                 onClose={() => setShowEditDialog(false)}
