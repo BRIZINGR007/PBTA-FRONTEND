@@ -67,14 +67,13 @@ const Transactions: React.FC<TransactionsProps> = ({
 
     const handleEdit = async (updatedTransaction: Transaction) => {
         try {
+            const token = localStorage.getItem('authToken');
             await axios.patch(
                 `${API_BASE_URL}/api/expense-tracker/edit-transaction/`,
                 updatedTransaction,
                 {
                     params: { transaction_id: updatedTransaction.transaction_id },
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
                     withCredentials: true
                 }
             );
