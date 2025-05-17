@@ -23,8 +23,10 @@ const useGetTransactionSummary = (month: string) => {
     const fetchSummaryData = useCallback(async () => {
         setLoading(true);
         setError(null);
+        const token = localStorage.getItem('authToken');
         try {
             const response = await axios.get(`${API_BASE_URL}/api/expense-tracker/get-transaction-summary-by-month/?month=${month}`, {
+                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
                 withCredentials: true
             });
             setSummaryData(response.data);

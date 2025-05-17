@@ -22,6 +22,12 @@ const Login: React.FC = () => {
             }, {
                 withCredentials: true
             });
+            const { token } = response.data;
+
+            if (token) {
+                localStorage.setItem('authToken', token);
+                console.log('Token stored in localStorage');
+            }
 
             console.log('Login successful:', response.data);
             navigate('/');

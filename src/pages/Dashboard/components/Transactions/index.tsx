@@ -43,10 +43,12 @@ const Transactions: React.FC<TransactionsProps> = ({
 
     const handleDelete = async (transactionId: string) => {
         try {
+            const token = localStorage.getItem('authToken');
             await axios.delete(
                 `${API_BASE_URL}/api/expense-tracker/delete-transaction/`,
                 {
                     params: { transaction_id: transactionId },
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
                     withCredentials: true // includes JWT from cookies
                 }
             );

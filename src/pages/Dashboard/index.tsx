@@ -33,10 +33,14 @@ const Dashboard: React.FC = () => {
 
     const handleLogout = async () => {
         try {
+            const token = localStorage.getItem('authToken');
             const response = await axios.post(`${API_BASE_URL}/api/users/logout/`, {}, {
+                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
                 withCredentials: true
             }
             );
+            localStorage.removeItem('authToken');
+            console.log('Token removed from localStorage');
             console.log("Succesfully  Logged Out :", response.data);
             navigate('/login');
         } catch (error) {

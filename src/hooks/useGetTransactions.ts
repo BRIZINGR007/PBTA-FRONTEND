@@ -32,6 +32,7 @@ const useGetTransactions = (month: string, page: number) => {
         setLoading(true);
         setError(null);
         try {
+            const token = localStorage.getItem('authToken');
             const response = await axios.get<TransactionResponse>(
                 `${API_BASE_URL}/api/expense-tracker/get-transactions/`,
                 {
@@ -39,6 +40,7 @@ const useGetTransactions = (month: string, page: number) => {
                         month,
                         page: currentPage,
                     },
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
                     withCredentials: true,
                 }
             );

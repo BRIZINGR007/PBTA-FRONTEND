@@ -8,9 +8,11 @@ const AuthGuard: React.FC<{ children: React.ReactElement }> = ({ children }) => 
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
+        const token = localStorage.getItem('authToken');
         const validateSession = async () => {
             try {
                 await axios.get(`${API_BASE_URL}/api/users/validate-session/`, {
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
                     withCredentials: true
                 });
                 setIsAuthenticated(true);

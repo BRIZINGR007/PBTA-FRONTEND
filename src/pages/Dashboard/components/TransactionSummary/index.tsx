@@ -57,11 +57,12 @@ const TransactionSummary: React.FC<TransactionSummaryProps> = ({ month, setMonth
     const handleAddTransaction = async () => {
         try {
             console.log("Month", { ...transactionData, amount: parseFloat(transactionData.amount), month },);
+            const token = localStorage.getItem('authToken');
             await axios.post(
                 `${API_BASE_URL}/api/expense-tracker/add-transaction/`,
                 { ...transactionData, amount: parseFloat(transactionData.amount), month },
                 {
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
                     withCredentials: true
                 }
             );
