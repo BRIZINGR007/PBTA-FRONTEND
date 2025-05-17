@@ -1,6 +1,6 @@
 // src/hooks/useTransactionSummary.ts
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import { API_BASE_URL } from '../constants/constants';
 
@@ -14,12 +14,13 @@ interface SummaryData {
     user: string;
 }
 
+
 const useGetTransactionSummary = (month: string) => {
     const [summaryData, setSummaryData] = useState<SummaryData | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
-    const fetchSummaryData = async () => {
+    const fetchSummaryData = useCallback(async () => {
         setLoading(true);
         setError(null);
         try {
@@ -32,14 +33,13 @@ const useGetTransactionSummary = (month: string) => {
         } finally {
             setLoading(false);
         }
-    };
+    }, [month]); // ✅ depends on `month`
 
     useEffect(() => {
         fetchSummaryData();
-    }, [month]);
+    }, [fetchSummaryData]); // ✅ now warning is gone
 
     return { summaryData, loading, error, refetch: fetchSummaryData };
 };
-
 
 export default useGetTransactionSummary;

@@ -1,6 +1,4 @@
-// src/hooks/useGetTransactions.ts
-
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import { API_BASE_URL } from '../constants/constants';
 
@@ -30,7 +28,7 @@ const useGetTransactions = (month: string, page: number) => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
-    const fetchTransactions = async () => {
+    const fetchTransactions = useCallback(async () => {
         setLoading(true);
         setError(null);
         try {
@@ -51,11 +49,10 @@ const useGetTransactions = (month: string, page: number) => {
         } finally {
             setLoading(false);
         }
-    };
-
+    }, [month, currentPage]);
     useEffect(() => {
         fetchTransactions();
-    }, [month, currentPage]);
+    }, [fetchTransactions]);
 
     return {
         transactions,
