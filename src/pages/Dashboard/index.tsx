@@ -7,6 +7,7 @@ import BudgetComparisonChart from './components/DataAnalysis';
 import useGetTransactionSummary from '../../hooks/useGetTransactionSummary';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { API_BASE_URL } from '../../constants/constants';
 
 
 
@@ -32,7 +33,7 @@ const Dashboard: React.FC = () => {
 
     const handleLogout = async () => {
         try {
-            const response = await axios.post('http://localhost:8000/api/users/logout/', {}, {
+            const response = await axios.post(`${API_BASE_URL}/api/users/logout/`, {}, {
                 withCredentials: true
             }
             );
