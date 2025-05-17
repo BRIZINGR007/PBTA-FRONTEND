@@ -38,11 +38,12 @@ const TransactionSummary: React.FC<TransactionSummaryProps> = ({ month, setMonth
 
     const handleAddMonthlyBudget = async () => {
         try {
+            const token = localStorage.getItem('authToken');
             await axios.patch(
                 `${API_BASE_URL}/api/expense-tracker/add-monthly-budget/`,
                 { amount: parseFloat(budgetInput), month },
                 {
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
                     withCredentials: true
                 }
             );
